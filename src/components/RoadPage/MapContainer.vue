@@ -7,61 +7,57 @@
 
 <script>
 import Searchbar from "./SearchBar.vue";
-import index from "../../../node_modules/_vue@2.5.16@vue";
+
 export default {
   name: "Mapcontainer",
   components: {
-    Searchbar,
+    Searchbar
   },
   data() {
     return {
       count: 0,
       /*地图对象*/
-      map: {},
+      map: {}
     };
   },
-  created: function () {
+  created: function() {
     let that = this;
     /**
      * @description 更新指定节点的出行方案类型
      * @param {number} itemIndex 指定节点的索引
      * @param {string} type 出行类型
      * */
-    this.$parent.$on("updateTransferPlan", function (itemIndex, type) {
+    this.$parent.$on("updateTransferPlan", function(itemIndex, type) {
       let m_From =
         that.$store.state.POIs[that.$store.state.nowDay][itemIndex - 1].detail
           .location;
       let m_To =
         that.$store.state.POIs[that.$store.state.nowDay][itemIndex].detail
           .location;
-      that.createTransferObj(m_From, m_To, type).then((newTransfer) => {
+      that.createTransferObj(m_From, m_To, type).then(newTransfer => {
         that.$store.commit({
           type: "updateTransferPlan",
           newTransfer: newTransfer,
-          index: itemIndex,
+          index: itemIndex
         });
       });
     });
 
     /*修改出行计划索引*/
-    this.$parent.$on(
-      "updateTransferIndex",
-      function (itemIndex, transferIndex) {
-        that.updateTransferIndex(itemIndex, transferIndex);
-      }
-    );
+    this.$parent.$on("updateTransferIndex", function(itemIndex, transferIndex) {
+      that.updateTransferIndex(itemIndex, transferIndex);
+    });
 
     /*移动地图到指定点*/
-    this.$parent.$on("setCenter", function (index) {
-      let position =
-        that.$store.state.POIs[that.$store.state.nowDay][
-          index
-        ].marker.getPosition();
+    this.$parent.$on("setCenter", function(index) {
+      let position = that.$store.state.POIs[that.$store.state.nowDay][
+        index
+      ].marker.getPosition();
       that.map.panTo(position);
     });
 
     /*移动地图到指定天*/
-    this.$parent.$on("moveTo", function (index, day) {
+    this.$parent.$on("moveTo", function(index, day) {
       let cache = that.$store.state.POIs[that.$store.state.nowDay][index];
       cache.marker.hide();
       for (let i = 0; cache.transfer && i < cache.transfer.routes.length; i++) {
@@ -83,11 +79,11 @@ export default {
               locTo.detail.location,
               locTo.transfer.type
             )
-            .then((result) => {
+            .then(result => {
               that.$store.commit({
                 type: "updateTransferPlan",
                 newTransfer: result,
-                index: index,
+                index: index
               });
             });
         } else if (locTo) {
@@ -95,7 +91,7 @@ export default {
           that.$store.commit({
             type: "updateTransferPlan",
             newTransfer: null,
-            index: index,
+            index: index
           });
         }
       } else {
@@ -112,11 +108,11 @@ export default {
               locTo.detail.location,
               locTo.transfer.type
             )
-            .then((result) => {
+            .then(result => {
               that.$store.commit({
                 type: "updateTransferPlan",
                 newTransfer: result,
-                index: index,
+                index: index
               });
             });
         } else if (locTo) {
@@ -124,7 +120,7 @@ export default {
           that.$store.commit({
             type: "updateTransferPlan",
             newTransfer: null,
-            index: index,
+            index: index
           });
         }
         let newDay = that.$store.state.POIs[day]; //切换到的那一天
@@ -132,14 +128,14 @@ export default {
           //有前驱
           let locFrom = newDay[newDay.length - 1].detail.location; //last
           let locTo = cache.detail.location;
-          that.createTransferObj(locFrom, locTo, "driving").then((result) => {
+          that.createTransferObj(locFrom, locTo, "driving").then(result => {
             cache.transfer = result;
             for (let i = 0; i < result.routes.length; i++)
               result.routes[i].hide(); //切换后消除路线
             that.$store.dispatch({
               type: "addPOIFromMap",
               data: cache,
-              dayTo: day,
+              dayTo: day
             });
           });
         } else {
@@ -148,14 +144,14 @@ export default {
           that.$store.dispatch({
             type: "addPOIFromMap",
             data: cache,
-            dayTo: day,
+            dayTo: day
           });
         }
       }
     });
 
     /*POI当日更改顺序*/
-    this.$parent.$on("sort", function (itemOldIndex, itemNewIndex) {
+    this.$parent.$on("sort", function(itemOldIndex, itemNewIndex) {
       //oldIndex是带移动节点当前的位置
       let cache =
         that.$store.state.POIs[that.$store.state.nowDay][itemOldIndex]; //待移动节点
@@ -170,22 +166,22 @@ export default {
         //后继节点有新前驱
         let locFrom = oldBefore.detail.location;
         let locTo = oldAfter.detail.location;
-        that.createTransferObj(locFrom, locTo, "driving").then((result) => {
+        that.createTransferObj(locFrom, locTo, "driving").then(result => {
           that.$store.commit("updateTransferPlan", {
             newTransfer: result,
-            index: itemOldIndex + 1,
+            index: itemOldIndex + 1
           });
         });
       } else if (oldAfter) {
         that.$store.commit("updateTransferPlan", {
           newTransfer: null,
-          index: itemOldIndex + 1,
+          index: itemOldIndex + 1
         });
       }
       /*移动元素到newIndex */
       that.$store.commit("sortItem", {
         oldIndex: itemOldIndex,
-        newIndex: itemNewIndex,
+        newIndex: itemNewIndex
       });
       /*该节点本身更新 */
       let newBefore =
@@ -194,17 +190,17 @@ export default {
       if (newBefore) {
         let locFrom = newBefore.detail.location;
         let locTo = cache.detail.location;
-        that.createTransferObj(locFrom, locTo, "driving").then((result) => {
+        that.createTransferObj(locFrom, locTo, "driving").then(result => {
           that.$store.commit("updateTransferPlan", {
             newTransfer: result,
-            index: itemNewIndex,
+            index: itemNewIndex
           });
         });
       } else {
         //移动后没有前驱
         that.$store.commit("updateTransferPlan", {
           newTransfer: null,
-          index: itemNewIndex,
+          index: itemNewIndex
         });
       }
       /*该节点 移动后 后方节点更新 */
@@ -214,23 +210,23 @@ export default {
       if (newAfter) {
         let locFrom = cache.detail.location;
         let locTo = newAfter.detail.location;
-        that.createTransferObj(locFrom, locTo, "driving").then((result) => {
+        that.createTransferObj(locFrom, locTo, "driving").then(result => {
           that.$store.commit("updateTransferPlan", {
             newTransfer: result,
-            index: itemNewIndex + 1,
+            index: itemNewIndex + 1
           });
         });
       }
     });
   },
-  mounted: function () {
+  mounted: function() {
     /*Create Map*/
     let map = new AMap.Map("map", {
       resizeEnable: true,
       zoom: 11,
       center: [116.397428, 39.90923],
       animateEnable: true,
-      mapStyle: "amap://styles/fe7d1f157e05c97d6930995928e4f39d",
+      mapStyle: "amap://styles/fe7d1f157e05c97d6930995928e4f39d"
     });
     map.setCity(this.$store.state.city);
     this.map = map; //全局保存map
@@ -240,12 +236,12 @@ export default {
     let search = new AMap.PlaceSearch(searchConfig);
     this.$store.commit("setPlaceSearch", {
       config: searchConfig,
-      search: search,
+      search: search
     });
 
     /*绑定热点单击事件*/
     let that = this;
-    let hpclick = map.on("hotspotclick", function (event) {
+    let hpclick = map.on("hotspotclick", function(event) {
       that.createInfoWindow(event);
     });
 
@@ -255,20 +251,20 @@ export default {
       let src = this.$store.state.storge.localData;
       let searchTool = new AMap.PlaceSearch({
         city: src.city,
-        extensions: "all",
+        extensions: "all"
       });
       function importNode(local_node, pre_node, search_tool) {
         return new Promise((resolve, reject) => {
           let node = {};
           node.id = local_node.id;
-          search_tool.getDetails(local_node.id, function (status, result) {
+          search_tool.getDetails(local_node.id, function(status, result) {
             node.detail = result.poiList.pois[0];
             /*create Marker */
             let marker = new AMap.Marker({
               map: that.map,
               position: node.detail.location,
               animation: "AMAP_ANIMATION_DROP",
-              title: node.detail.name,
+              title: node.detail.name
             });
             marker.show();
             node.marker = marker;
@@ -281,7 +277,7 @@ export default {
                   node.detail.location,
                   local_node.transfer.type
                 )
-                .then((result) => {
+                .then(result => {
                   node.transfer = result;
                   resolve(node);
                 });
@@ -293,7 +289,7 @@ export default {
         });
       }
 
-      (async function () {
+      (async function() {
         for (let i = 0; i < src.POIs.length; i++) {
           if (i != src.POIs.length - 1) that.$store.commit("addNewDay");
           for (let j = 0; j < src.POIs[i].length; j++) {
@@ -306,7 +302,7 @@ export default {
             await that.$store.dispatch({
               type: "addPOIFromMap",
               data: poi_node,
-              dayTo: i,
+              dayTo: i
             });
             if (src.POIs[i][j].transfer && src.POIs[i][j].transfer.index != 0) {
               let idx = src.POIs[i][j].transfer.index;
@@ -326,7 +322,7 @@ export default {
      * @description 创建点击热点信息窗体
      * @param {AMP click event} event 点击地图触发的事件对象
      */
-    createInfoWindow: function (event) {
+    createInfoWindow: function(event) {
       let infoDiv = document.createElement("div");
       let InfoWindowDemo =
         '<div id="infoWindow">\
@@ -343,7 +339,7 @@ export default {
       infoDiv.innerHTML += InfoWindowDemo;
       //绑定点击加号的事件
       let that = this;
-      infoDiv.querySelector("#infoAction").onclick = function (e) {
+      infoDiv.querySelector("#infoAction").onclick = function(e) {
         that.addPOIToData(event);
       };
 
@@ -352,7 +348,7 @@ export default {
         content: infoDiv,
         offset: new AMap.Pixel(0, -10),
         closeWhenClickMap: true,
-        autoMove: true,
+        autoMove: true
       });
       infoWindow.open(this.map, event.lnglat);
     },
@@ -384,7 +380,7 @@ export default {
           strokeColor: "#13afc8",
           showDir: true,
           lineJoin: "round",
-          path: routesPoints,
+          path: routesPoints
         });
         routes.push(_route);
         return routes;
@@ -406,7 +402,7 @@ export default {
                 : "#fed71a",
             showDir: true,
             lineJoin: "round",
-            path: plan.segments[i].transit.path,
+            path: plan.segments[i].transit.path
           });
           routes.push(_route);
         }
@@ -427,7 +423,7 @@ export default {
           strokeColor: "#21a265",
           showDir: true,
           lineJoin: "round",
-          path: routesPoints,
+          path: routesPoints
         });
         routes.push(_route);
         return routes;
@@ -447,7 +443,7 @@ export default {
           strokeColor: "#fed71a",
           showDir: true,
           lineJoin: "round",
-          path: routesPoints,
+          path: routesPoints
         });
         routes.push(_route);
         return routes;
@@ -460,22 +456,22 @@ export default {
      * @param {string} type 路径规划类别
      * @return {object} transfer对象
      */
-    createTransferObj: function (poiFrom, poiTo, type) {
+    createTransferObj: function(poiFrom, poiTo, type) {
       let that = this;
-      return new Promise(function (resolve, reject) {
+      return new Promise(function(resolve, reject) {
         let transfer = {
           type: "",
           index: 0,
           kit: {},
           plan: {},
-          routes: {},
+          routes: {}
         };
         if (type === "driving") {
           //Driving plan
           transfer.type = "driving";
           let kit = new AMap.Driving(that.$store.state.AMap_Driving);
           transfer.kit = kit;
-          kit.search(poiFrom, poiTo, function (statue, result) {
+          kit.search(poiFrom, poiTo, function(statue, result) {
             if (statue == "complete") {
               transfer.plan = result;
               transfer.routes = that.drawResultOnMap(result, 0, "driving"); //draw result
@@ -491,7 +487,7 @@ export default {
           let kit = new AMap.Transfer(that.$store.state.AMap_Bus);
           transfer.kit = kit;
           console.log("set");
-          kit.search(poiFrom, poiTo, function (statue, result) {
+          kit.search(poiFrom, poiTo, function(statue, result) {
             console.log("reso");
             if (statue == "complete") {
               transfer.plan = result;
@@ -505,7 +501,7 @@ export default {
           transfer.type = "ride";
           let kit = new AMap.Riding(that.$store.state.AMap_Ride);
           transfer.kit = kit;
-          kit.search(poiFrom, poiTo, function (statue, result) {
+          kit.search(poiFrom, poiTo, function(statue, result) {
             if (statue == "complete") {
               transfer.plan = result;
               transfer.routes = that.drawResultOnMap(result, 0, "ride");
@@ -518,7 +514,7 @@ export default {
           transfer.type = "walk";
           let kit = new AMap.Walking(that.$store.state.AMap_Walk);
           transfer.kit = kit;
-          kit.search(poiFrom, poiTo, function (statue, result) {
+          kit.search(poiFrom, poiTo, function(statue, result) {
             if (statue == "complete") {
               transfer.plan = result;
               transfer.routes = that.drawResultOnMap(result, 0, "walk");
@@ -533,7 +529,7 @@ export default {
      * @description 增加POI到总列表
      * @param {object} event 事件obj
      */
-    addPOIToData: function (event) {
+    addPOIToData: function(event) {
       /*校验是否已存在id*/
       let pois = this.$store.state.POIs;
       for (let i = 0; i < pois.length; i++) {
@@ -548,7 +544,7 @@ export default {
         map: that.map,
         position: event.lnglat,
         animation: "AMAP_ANIMATION_DROP",
-        title: event.name,
+        title: event.name
       });
       marker.show();
 
@@ -558,7 +554,7 @@ export default {
       let payload = {
         id: event.id,
         marker: marker,
-        transfer: null,
+        transfer: null
       };
       if (_pois.length > 0) {
         //若存在之前节点，计算路径
@@ -568,27 +564,27 @@ export default {
           event.lnglat,
           "driving"
         )
-          .then((result) => {
+          .then(result => {
             console.log(result);
             payload.transfer = result;
             that.$store.dispatch({
               type: "addPOIFromMap",
-              data: payload,
+              data: payload
             });
             that.$emit("setLoading", false); //set loading
           })
-          .catch((error) => {
+          .catch(error => {
             console.log(error);
           });
       } else {
         //提交至vuex
         that.$store.dispatch({
           type: "addPOIFromMap",
-          data: payload,
+          data: payload
         });
       }
     },
-    updateTransferIndex: function (itemIndex, transferIndex) {
+    updateTransferIndex: function(itemIndex, transferIndex) {
       let that = this;
       let result =
         that.$store.state.POIs[that.$store.state.nowDay][itemIndex].transfer;
@@ -601,10 +597,10 @@ export default {
         type: "updateTransferIndex",
         newRoutes: newRoutes,
         index: itemIndex,
-        transferIndex: transferIndex,
+        transferIndex: transferIndex
       });
-    },
-  },
+    }
+  }
 };
 </script>
 
