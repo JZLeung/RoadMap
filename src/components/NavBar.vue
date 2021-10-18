@@ -7,34 +7,43 @@
       <router-link to="/">路径规划</router-link>
       <router-link to="/abstract">行程概览</router-link>
     </ul>
-    <input id="cityName" type="text"
+    <input
+      id="cityName"
+      type="text"
       v-if="!isMobile"
       v-model="$store.state.city"
       v-bind:class="$store.state.city == '' ? 'unName' : ''"
-      placeholder="输入城市名">
-    <el-popover
-      placement="top-start"
-      trigger="hover"
-      v-if="!isMobile">
+      placeholder="输入城市名"
+    />
+    <el-popover placement="top-start" trigger="hover" v-if="!isMobile">
       <el-switch
         active-text="保存至云端"
         :value="$store.state.storge.toCloud"
-        @change="storgeStateChange">
+        @change="storgeStateChange"
+      >
       </el-switch>
-      <el-button @click="mycode = true" v-if="$store.state.storge.toCloud">生成分享二维码</el-button>
-      <el-button icon="el-icon-upload" circle slot="reference" @click="save" v-loading="loading"></el-button>
+      <el-button @click="mycode = true" v-if="$store.state.storge.toCloud"
+        >生成分享二维码</el-button
+      >
+      <el-button
+        icon="el-icon-upload"
+        circle
+        slot="reference"
+        @click="save"
+        v-loading="loading"
+      ></el-button>
     </el-popover>
 
-    <el-dialog
-      title="登录/注册"
-      :visible.sync="dialogVisible">
-      <User @login="dialogVisible = false;login_success()"/>
+    <el-dialog title="登录/注册" :visible.sync="dialogVisible">
+      <User
+        @login="
+          dialogVisible = false;
+          login_success();
+        "
+      />
     </el-dialog>
 
-    <el-dialog
-      title="分享二维码"
-      :visible.sync="mycode"
-      @open="showCode">
+    <el-dialog title="分享二维码" :visible.sync="mycode" @open="showCode">
       <canvas id="qrcode"></canvas>
     </el-dialog>
   </div>
@@ -46,13 +55,13 @@ import User from "./User";
 export default {
   name: "Navbar",
   components: {
-    User
+    User,
   },
   data() {
     return {
       dialogVisible: false,
       loading: false,
-      mycode: false
+      mycode: false,
     };
   },
   methods: {
@@ -78,7 +87,7 @@ export default {
       if (!window.localStorage) {
         this.$message({
           message: "保存需要使用localstorge",
-          type: "error"
+          type: "error",
         });
         this.loading = false;
       } else {
@@ -90,11 +99,11 @@ export default {
         if (this.$store.state.storge.toCloud) {
           this.lcs
             .saveToCloud(JSON.stringify(this.$store.getters.exportData))
-            .then(result => {
+            .then((result) => {
               console.log(result);
               this.loading = false;
             })
-            .catch(err => {
+            .catch((err) => {
               console.log(err);
               this.loading = false;
             });
@@ -105,15 +114,21 @@ export default {
     },
     showCode() {
       let that = this;
-      setTimeout(function() {
+      setTimeout(function () {
         let canvas = document.getElementById("qrcode");
-        Qrcode.toCanvas(canvas, "https://dixeran.github.io/RoadMap/?type=mobile&email=" + that.lcs.getEmail() + "/", function(error) {
-          if (error) console.error(error);
-          console.log("success!");
-        });
+        Qrcode.toCanvas(
+          canvas,
+          "https://dixeran.github.io/RoadMap/?type=mobile&email=" +
+            that.lcs.getEmail() +
+            "/",
+          function (error) {
+            if (error) console.error(error);
+            console.log("success!");
+          }
+        );
       }, 100);
-    }
-  }
+    },
+  },
 };
 </script>
 

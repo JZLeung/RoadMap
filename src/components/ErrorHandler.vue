@@ -1,17 +1,17 @@
 <template>
   <div id="Errorhandler">
-    {{errorData}}
+    {{ errorData }}
   </div>
 </template>
 <script>
 export default {
-  name:'Errorhandler',
-  props:['errorData']
-}
+  name: "Errorhandler",
+  props: ["errorData"],
+};
 </script>
 
 <style scoped>
-#Errorhandler{
+#Errorhandler {
   text-align: center;
   font-size: 1.25rem;
   padding: 0.2rem 0.5rem;
@@ -21,7 +21,7 @@ export default {
   border-radius: 2px;
   transition: all ease 0.2s;
 }
-#Errorhandler:hover{
+#Errorhandler:hover {
   box-shadow: 0 0 8px #b83e2c;
 }
 </style>

@@ -2,46 +2,78 @@
   <div id="Detailpath">
     <div id="daySelector">
       <div id="selector">
-        <a href="#" @click="$store.commit('switchDay', $store.state.nowDay-1)">
+        <a
+          href="#"
+          @click="$store.commit('switchDay', $store.state.nowDay - 1)"
+        >
           <i class="iconfont icon-left"></i>
         </a>
-        <span>第<span>{{$store.state.nowDay + 1}}</span>天</span>
-        <a href="#" @click="$store.commit('switchDay', $store.state.nowDay+1)">
+        <span
+          >第<span>{{ $store.state.nowDay + 1 }}</span
+          >天</span
+        >
+        <a
+          href="#"
+          @click="$store.commit('switchDay', $store.state.nowDay + 1)"
+        >
           <i class="iconfont icon-right"></i>
         </a>
         <a href="#" @click="$store.commit('addNewDay')" v-if="!isMobile">
           <i class="iconfont icon-plus"></i>
         </a>
-        <a href="#" class="alert" @click="$store.commit('deleteDay', $store.state.nowDay)" v-if="!isMobile">
+        <a
+          href="#"
+          class="alert"
+          @click="$store.commit('deleteDay', $store.state.nowDay)"
+          v-if="!isMobile"
+        >
           <i class="iconfont icon-minus"></i>
         </a>
       </div>
       <div id="total" @click="$emit('updateTransferPlan', 5, 5)">
-        共{{$store.state.totalDays}}天
+        共{{ $store.state.totalDays }}天
       </div>
     </div>
     <div id="paths">
       <ul id="nodex">
-        <template v-for="(item, index) in $store.state.POIs[$store.state.nowDay]">
+        <template
+          v-for="(item, index) in $store.state.POIs[$store.state.nowDay]"
+        >
           <div class="nodeCard" :key="item.name" :index="index">
             <!--换乘选择-->
             <Collapse v-if="item.transfer" :transferItem="item.transfer">
               <!-- 选择器slot -->
               <div class="cd-select-group" slot="selector">
-                <select name="cd-method" class="cd-select"
-                        :value="item.transfer.type"
-                        @change="updateTransferPlan($event, index)">
-                  <option v-for="option in transPlan" v-bind:value="option.data" :key="option.data">
-                    {{option.name}}
+                <select
+                  name="cd-method"
+                  class="cd-select"
+                  :value="item.transfer.type"
+                  @change="updateTransferPlan($event, index)"
+                >
+                  <option
+                    v-for="option in transPlan"
+                    v-bind:value="option.data"
+                    :key="option.data"
+                  >
+                    {{ option.name }}
                   </option>
                 </select>
-                <select name="cd-plan" class="cd-select"
-                        v-model="item.transfer.index"
-                        @change="$emit('updateTransferIndex', index, item.transfer.index)">
-                  <option v-for="n in (item.transfer.plan.routes || item.transfer.plan.plans).length"
-                          v-bind:value="n - 1"
-                          :key="n">
-                    方案{{n}}
+                <select
+                  name="cd-plan"
+                  class="cd-select"
+                  v-model="item.transfer.index"
+                  @change="
+                    $emit('updateTransferIndex', index, item.transfer.index)
+                  "
+                >
+                  <option
+                    v-for="n in (
+                      item.transfer.plan.routes || item.transfer.plan.plans
+                    ).length"
+                    v-bind:value="n - 1"
+                    :key="n"
+                  >
+                    方案{{ n }}
                   </option>
                 </select>
               </div>
@@ -51,16 +83,20 @@
             <div class="cd-main">
               <Cardcollapse :detail="item.detail">
                 <div type="simple" slot="header">
-                  <p>{{item.detail.name}}</p>
-                  <p class="sm">{{item.detail.address}}</p>
+                  <p>{{ item.detail.name }}</p>
+                  <p class="sm">{{ item.detail.address }}</p>
                 </div>
               </Cardcollapse>
             </div>
             <!--底部操作-->
             <div class="cd-footer">
-              <button href="#" @click="$emit('setCenter', index)"><i class="iconfont icon-androidlocate"></i></button>
+              <button href="#" @click="$emit('setCenter', index)">
+                <i class="iconfont icon-androidlocate"></i>
+              </button>
               <button href="#"><i class="iconfont icon-move"></i></button>
-              <button href="#" @click="$emit('moveTo', index, null)"><i class="iconfont icon-delete color-alert"></i></button>
+              <button href="#" @click="$emit('moveTo', index, null)">
+                <i class="iconfont icon-delete color-alert"></i>
+              </button>
             </div>
           </div>
         </template>
@@ -77,39 +113,39 @@ export default {
   name: "Detailpath",
   components: {
     Collapse,
-    Cardcollapse
+    Cardcollapse,
   },
   data() {
     return {
       transPlan: [
         {
           data: "driving",
-          name: "驾车"
+          name: "驾车",
         },
         {
           data: "bus",
-          name: "公交"
+          name: "公交",
         },
         {
           data: "ride",
-          name: "骑行"
+          name: "骑行",
         },
         {
           data: "walk",
-          name: "步行"
-        }
-      ]
+          name: "步行",
+        },
+      ],
     };
   },
   methods: {
-    updateTransferPlan:function(e, index){
+    updateTransferPlan: function (e, index) {
       let val = e.target.value;
-      this.$emit('updateTransferPlan', index, val);
-    }
+      this.$emit("updateTransferPlan", index, val);
+    },
   },
-  updated: function() {
-    if(this.isMobile){
-      return;//移动端不允许拖拽排序
+  updated: function () {
+    if (this.isMobile) {
+      return; //移动端不允许拖拽排序
     }
     let that = this;
     let container = document.getElementById("nodex");
@@ -118,10 +154,10 @@ export default {
       handle: ".cd-main",
       draggable: ".nodeCard",
       supportPointer: false,
-      onStart: function(e) {
+      onStart: function (e) {
         that.$emit("drag");
       },
-      onEnd: function(e) {
+      onEnd: function (e) {
         that.$emit("drag");
         if (e.oldIndex !== e.newIndex) {
           //更改了poi顺序
@@ -141,11 +177,11 @@ export default {
           that.$emit("sort", e.oldIndex, e.newIndex);
         }
       },
-      setData: function(dataTransfer, element) {
+      setData: function (dataTransfer, element) {
         dataTransfer.setData("ItemIndex", element.getAttribute("index"));
-      }
+      },
     });
-  }
+  },
 };
 </script>
 
@@ -216,7 +252,7 @@ button:focus {
   width: 100%;
   height: calc(100% - 3rem);
   overflow-y: auto;
-  background-image: url("/RoadMap/static/trangle.png");/*TODO:chenge this when build*/
+  background-image: url("/RoadMap/static/trangle.png"); /*TODO:chenge this when build*/
 }
 
 #paths > ul {

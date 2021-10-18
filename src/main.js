@@ -5,20 +5,20 @@ import Vuex from "vuex";
 import App from "./App";
 import router from "./router";
 
-import ElementUI from 'element-ui';//use element-ui
-import 'element-ui/lib/theme-chalk/index.css';
+import ElementUI from "element-ui"; //use element-ui
+import "element-ui/lib/theme-chalk/index.css";
 
-import LCStorge from './plungins/LeanCloud'//to use Leancloud
+import LCStorge from "./plungins/LeanCloud"; //to use Leancloud
 
 Vue.use(Vuex);
 Vue.use(ElementUI);
-if (location.search.indexOf('mobile') < 0) {
+if (location.search.indexOf("mobile") < 0) {
   Vue.mixin({
     data: function () {
       return {
-        isMobile: false
-      }
-    }
+        isMobile: false,
+      };
+    },
   });
 } else {
   let hash = location.search.match(/email=(\w+)/)[1];
@@ -26,10 +26,10 @@ if (location.search.indexOf('mobile') < 0) {
     data: function () {
       return {
         isMobile: true,
-        email: hash
-      }
-    }
-  })
+        email: hash,
+      };
+    },
+  });
 }
 Vue.use(LCStorge);
 Vue.config.productionTip = false;
@@ -55,35 +55,35 @@ const store = new Vuex.Store({
     AMap_PlaceSearch: {
       config: {
         city: "全国",
-        extensions: 'all'
+        extensions: "all",
       },
-      search: {}
+      search: {},
     },
     /*驾车规划*/
     AMap_Driving: {
       policy: AMap.DrivingPolicy.LEAST_TIME,
       hideMarkers: true,
       autoFitView: false,
-      showTraffic: false
+      showTraffic: false,
     },
     /*公交规划*/
     AMap_Bus: {
-      city: '',
+      city: "",
       hideMarkers: true,
-      autoFitView: false
+      autoFitView: false,
     },
     AMap_Ride: {
       hideMarkers: true,
-      autoFitView: false
+      autoFitView: false,
     },
     AMap_Walk: {
       hideMarkers: true,
-      autoFitView: false
+      autoFitView: false,
     },
     storge: {
       toCloud: false,
-      localData: ''
-    }
+      localData: "",
+    },
   },
   mutations: {
     /**@description 设置PlaceSearch插件
@@ -161,8 +161,7 @@ const store = new Vuex.Store({
     addPOIFromMap(state, payload) {
       if (!payload.dayTo) {
         state.POIs[state.nowDay].push(payload.data);
-      }
-      else state.POIs[payload.dayTo].push(payload.data);//move to
+      } else state.POIs[payload.dayTo].push(payload.data); //move to
     },
     /**
      * @description 更新POI出行方案，替换整个transfer对象
@@ -194,8 +193,10 @@ const store = new Vuex.Store({
         }
       }
       let item = state.POIs[state.nowDay][payload.index];
-      state.POIs[state.nowDay][payload.index].transfer.routes = payload.newRoutes;
-      state.POIs[state.nowDay][payload.index].transfer.index = payload.transferIndex;
+      state.POIs[state.nowDay][payload.index].transfer.routes =
+        payload.newRoutes;
+      state.POIs[state.nowDay][payload.index].transfer.index =
+        payload.transferIndex;
     },
     /**
      * @description 从nowday删除index
@@ -220,38 +221,39 @@ const store = new Vuex.Store({
      */
     setStorgeType: function (state, isCloud) {
       state.storge.toCloud = isCloud;
-    }
+    },
   },
   actions: {
     addPOIFromMap(context, payload) {
       return new Promise(function (resolve, reject) {
-        if (!payload.data.detail) {//no detail
-          context.state.AMap_PlaceSearch.search.getDetails(payload.data.id, function (
-            status,
-            result
-          ) {
-            if (status == "complete") {
-              payload.data.detail = result.poiList.pois[0];
-              context.commit("addPOIFromMap", payload);
-            } else {
-              console.log(result);
-              context.commit("addPOIFromMap", payload);
+        if (!payload.data.detail) {
+          //no detail
+          context.state.AMap_PlaceSearch.search.getDetails(
+            payload.data.id,
+            function (status, result) {
+              if (status == "complete") {
+                payload.data.detail = result.poiList.pois[0];
+                context.commit("addPOIFromMap", payload);
+              } else {
+                console.log(result);
+                context.commit("addPOIFromMap", payload);
+              }
+              resolve();
             }
-            resolve();
-          });
-        }
-        else {//already exist data
+          );
+        } else {
+          //already exist data
           context.commit("addPOIFromMap", payload);
           resolve();
         }
       });
-    }
+    },
   },
   getters: {
     /**
      * @description 生成导出到持久化的数据
      */
-    exportData: state => {
+    exportData: (state) => {
       let data = {};
       data.city = state.city;
       data.totalDays = state.totalDays;
@@ -262,17 +264,19 @@ const store = new Vuex.Store({
           let poi = state.POIs[i][j];
           ar[i].push({
             id: poi.detail.id,
-            transfer: poi.transfer ? {
-              type: poi.transfer.type,
-              index: poi.transfer.index
-            } : null
+            transfer: poi.transfer
+              ? {
+                  type: poi.transfer.type,
+                  index: poi.transfer.index,
+                }
+              : null,
           });
         }
       }
       data.POIs = ar;
       return data;
-    }
-  }
+    },
+  },
 });
 
 /* eslint-disable no-new */
@@ -281,5 +285,5 @@ new Vue({
   router,
   store,
   components: { App },
-  template: "<App/>"
+  template: "<App/>",
 });

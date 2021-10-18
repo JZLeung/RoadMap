@@ -2,20 +2,28 @@
   <div id="Checklist">
     <el-row justify="end" type="flex">
       <el-col :span="20">
-        <h1 class="text" id="hTitle">{{mapState.city}} {{mapState.POIs.length}} 日游</h1>
+        <h1 class="text" id="hTitle">
+          {{ mapState.city }} {{ mapState.POIs.length }} 日游
+        </h1>
       </el-col>
     </el-row>
     <el-row justify="end" type="flex">
       <el-col :span="16">
-        <h2 class="text" id="mTitle">{{hitokoto.hitokoto}}</h2>
-        <h2 class="text" id="mTitle">—— 《{{hitokoto.from}}》</h2>
+        <h2 class="text" id="mTitle">{{ hitokoto.hitokoto }}</h2>
+        <h2 class="text" id="mTitle">—— 《{{ hitokoto.from }}》</h2>
       </el-col>
     </el-row>
-    <el-row v-for="(day, n) in $store.state.POIs" :key="n" type="flex" justify="center" class="block">
+    <el-row
+      v-for="(day, n) in $store.state.POIs"
+      :key="n"
+      type="flex"
+      justify="center"
+      class="block"
+    >
       <el-col :span="4">
         <el-card class="box-card">
-          <h3 class="text dTitle">Day {{n + 1}}</h3>
-          <p>门票花费：{{getDailyCost(n)}}</p>
+          <h3 class="text dTitle">Day {{ n + 1 }}</h3>
+          <p>门票花费：{{ getDailyCost(n) }}</p>
         </el-card>
       </el-col>
       <el-col :span="20">
@@ -24,7 +32,7 @@
           <el-table-column prop="detail.address" label="地址"></el-table-column>
           <el-table-column prop="detail.name" label="Tag">
             <template slot-scope="scope">
-              <el-tag>{{scope.row.detail.type.split(';')[0]}}</el-tag>
+              <el-tag>{{ scope.row.detail.type.split(";")[0] }}</el-tag>
               <el-tag v-if="scope.row.detail.groupby">团购</el-tag>
             </template>
           </el-table-column>
@@ -37,11 +45,11 @@
 <script>
 export default {
   name: "Checklist",
-  mounted: function() {
+  mounted: function () {
     let that = this;
     var xhr = new XMLHttpRequest();
     xhr.open("get", "https://v1.hitokoto.cn/?c=d");
-    xhr.onreadystatechange = function() {
+    xhr.onreadystatechange = function () {
       if (xhr.readyState === 4) {
         var data = JSON.parse(xhr.responseText);
         if (data.hitokoto[data.hitokoto.length - 1] == "。") {
@@ -54,26 +62,26 @@ export default {
   },
   data() {
     return {
-      hitokoto: {}
+      hitokoto: {},
     };
   },
-  methods:{
-    getDailyCost:function(day){
+  methods: {
+    getDailyCost: function (day) {
       day = this.$store.state.POIs[day];
       let cost = 0;
-      for(let i = 0; i < day.length; i++){
-        if(day[i].detail.deep_type == "SCENIC"){
+      for (let i = 0; i < day.length; i++) {
+        if (day[i].detail.deep_type == "SCENIC") {
           cost += parseFloat(day[i].detail.scenic.price);
         }
       }
       return cost;
-    }
+    },
   },
   computed: {
-    mapState: function() {
+    mapState: function () {
       return this.$store.state;
-    }
-  }
+    },
+  },
 };
 </script>
 
@@ -116,7 +124,7 @@ h3 {
   margin: 1rem 0;
 }
 
-.box-card{
+.box-card {
   text-align: center;
 }
 </style>

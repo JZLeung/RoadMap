@@ -1,5 +1,8 @@
 <template>
-  <div id="Drawer" :style="{width: width + 'px', marginLeft: leftMargin + 'px'}">
+  <div
+    id="Drawer"
+    :style="{ width: width + 'px', marginLeft: leftMargin + 'px' }"
+  >
     <div id="content">
       <slot></slot>
     </div>
@@ -16,11 +19,11 @@ export default {
   props: ["width", "enable"],
   data() {
     return {
-      leftMargin: 0
+      leftMargin: 0,
     };
   },
   watch: {
-    enable: function(val) {
+    enable: function (val) {
       if (val) {
         let tween = new TWEEN.Tween(this).to({ leftMargin: -this.width }, 150);
         tween.start();
@@ -40,8 +43,8 @@ export default {
           TWEEN.update();
         }
       }
-    }
-  }
+    },
+  },
 };
 </script>
 
@@ -55,7 +58,7 @@ export default {
   border-left: solid 1px rgba(0, 0, 0, 0.25);
   box-shadow: 0 0 1px rgba(0, 0, 0, 0.1);
 }
-#content{
+#content {
   z-index: 2001;
   height: 100%;
 }
@@ -69,10 +72,12 @@ export default {
   background-color: rgba(0, 0, 0, 0.35);
 }
 
-.fade-enter-active, .fade-leave-active{
+.fade-enter-active,
+.fade-leave-active {
   transition: all 0.1s ease;
 }
-.fade-enter, .fade-leave-to{
+.fade-enter,
+.fade-leave-to {
   opacity: 0;
 }
 </style>

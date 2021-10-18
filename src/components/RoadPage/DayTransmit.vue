@@ -2,16 +2,23 @@
   <div id="Daytransmit">
     <div class="header">拖动至此处分发到其他日期</div>
     <ul>
-      <div class="item" v-for="n in $store.state.totalDays"
-            :key="n"
-            v-if="(n-1) != $store.state.nowDay"
-            @dragover.prevent
-            @drop.prevent="moveTo($event)"
-            :dayIndex="n - 1">
-        <div class="item-line" v-if="n != 1 && !((n-2) == $store.state.nowDay && (n-1) == 1)"></div>
-        <i class="item-icon iconfont icon-right"></i>
-        第{{n}}天
-      </div>
+      <template v-for="n in $store.state.totalDays">
+        <div
+          class="item"
+          :key="n"
+          v-if="n - 1 != $store.state.nowDay"
+          @dragover.prevent
+          @drop.prevent="moveTo($event)"
+          :dayIndex="n - 1"
+        >
+          <div
+            class="item-line"
+            v-if="n != 1 && !(n - 2 == $store.state.nowDay && n - 1 == 1)"
+          ></div>
+          <i class="item-icon iconfont icon-right"></i>
+          第{{ n }}天
+        </div>
+      </template>
     </ul>
   </div>
 </template>
@@ -23,11 +30,11 @@ export default {
     return {};
   },
   methods: {
-    moveTo: function(e) {
+    moveTo: function (e) {
       let k = e.dataTransfer.getData("ItemIndex");
       this.$emit("moveTo", k, e.target.getAttribute("dayIndex"));
-    }
-  }
+    },
+  },
 };
 </script>
 

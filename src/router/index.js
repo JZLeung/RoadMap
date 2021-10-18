@@ -1,25 +1,25 @@
-import Vue from 'vue'
-import Router from 'vue-router'
-import Checklist from '../components/CheckList'
-import Roadpage from '../components/Roadpage'
+import Vue from "vue";
+import Router from "vue-router";
+import Checklist from "../components/CheckList";
+import Roadpage from "../components/Roadpage";
 
-Vue.use(Router)
+Vue.use(Router);
 
 export default new Router({
   routes: [
     {
-      path: '/',
-      name: 'Roadpage',
+      path: "/",
+      name: "Roadpage",
       component: Roadpage,
       meta: {
-        keepAlive: true
-      }
+        keepAlive: true,
+      },
     },
     {
-      path: '/abstract',
-      name: 'Abstract',
-      component: Checklist
-    }
+      path: "/abstract",
+      name: "Abstract",
+      component: Checklist,
+    },
   ],
-  linkExactActiveClass:'active'
-})
+  linkExactActiveClass: "active",
+});

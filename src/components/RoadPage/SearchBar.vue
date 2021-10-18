@@ -5,14 +5,15 @@
       name="searchPOI"
       id="searchTile"
       placeholder="搜索景点.."
-      v-model="keyWord">
+      v-model="keyWord"
+    />
     <transition name="list">
       <div id="searchResult" v-if="keyWord != ''">
         <ul>
           <template v-for="item in suggests">
             <div class="suggest" :key="item.id" @click="searchChecked(item)">
-              <span type="name">{{item.name}}</span>
-              <span type="location">{{item.address}}</span>
+              <span type="name">{{ item.name }}</span>
+              <span type="location">{{ item.address }}</span>
             </div>
           </template>
         </ul>
@@ -29,11 +30,11 @@ export default {
       keyWord: "",
       suggests: [],
       page: 1,
-      lastSearch: null
+      lastSearch: null,
     };
   },
   watch: {
-    keyWord: function() {
+    keyWord: function () {
       if (
         !this.lastSearch ||
         this.lastSearch.getTime() - new Date().getTime() <= -300
@@ -42,7 +43,7 @@ export default {
         const pls = this.$store.state.AMap_PlaceSearch.search;
 
         let that = this;
-        pls.search(this.keyWord, function(status, result) {
+        pls.search(this.keyWord, function (status, result) {
           if (status == "complete" && result.poiList.count > 0) {
             that.suggests = result.poiList.pois;
           } else {
@@ -50,20 +51,20 @@ export default {
           }
         });
       }
-    }
+    },
   },
   methods: {
-    searchChecked: function(poi) {
+    searchChecked: function (poi) {
       let event = {
         id: poi.id,
         name: poi.name,
         lnglat: poi.location,
-        type: poi.type
+        type: poi.type,
       };
       this.$emit("searchChecked", event);
       this.keyWord = "";
-    }
-  }
+    },
+  },
 };
 </script>
 

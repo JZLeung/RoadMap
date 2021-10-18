@@ -4,10 +4,7 @@
       <div id="select">
         <h1>去哪？(･ω´･ )</h1>
         <div id="select-or">
-          <el-cascader
-            :options="option"
-            size="medium"
-            v-model="val">
+          <el-cascader :options="option" size="medium" v-model="val">
           </el-cascader>
         </div>
       </div>
@@ -18,11 +15,13 @@
       </div>
     </div>
 
-    <el-dialog
-      title="登录/注册"
-      :modal="false"
-      :visible.sync="dialogVisible">
-      <User @login="dialogVisible = false; importUser()"/>
+    <el-dialog title="登录/注册" :modal="false" :visible.sync="dialogVisible">
+      <User
+        @login="
+          dialogVisible = false;
+          importUser();
+        "
+      />
     </el-dialog>
   </div>
 </template>
@@ -31,8 +30,8 @@
 import User from "./User";
 export default {
   name: "Initmodel",
-  components:{
-    User
+  components: {
+    User,
   },
   data() {
     return {
@@ -42,22 +41,22 @@ export default {
       props: {
         label: "name",
         value: "name",
-        children: "districtList"
+        children: "districtList",
       },
-      dialogVisible: false
+      dialogVisible: false,
     };
   },
-  created: function() {
+  created: function () {
     this.lcs.Init();
   },
-  mounted: function() {
+  mounted: function () {
     let that = this;
-    AMap.service("AMap.DistrictSearch", function() {
+    AMap.service("AMap.DistrictSearch", function () {
       let districtSearch = new AMap.DistrictSearch({
         level: "country",
-        subdistrict: 2
+        subdistrict: 2,
       });
-      districtSearch.search("中国", function(status, result) {
+      districtSearch.search("中国", function (status, result) {
         that.formatArray(result.districtList[0].districtList);
         that.option = result.districtList[0].districtList;
       });
@@ -72,9 +71,9 @@ export default {
      * @description 格式化高德行政区查询结果
      * @param {array} target 待格式化数组
      */
-    formatArray: function(target) {
+    formatArray: function (target) {
       let that = this;
-      target.forEach(element => {
+      target.forEach((element) => {
         if (
           element.districtList &&
           element.districtList.length != 0 &&
@@ -93,8 +92,8 @@ export default {
      */
     importLocal() {
       let data = JSON.parse(localStorage.getItem("roadmap"));
-      if(!data){
-        this.$emit('error', '数据不存在');
+      if (!data) {
+        this.$emit("error", "数据不存在");
         return;
       }
       this.$store.state.storge.localData = data;
@@ -110,33 +109,37 @@ export default {
      * @param {string} email 处理过的邮箱
      */
     importCloud(email) {
-      this.lcs.getDataByEmail(email).then(result => {
-        let data = JSON.parse(result);
-        this.$store.state.storge.localData = data;
-        this.$store.state.city = data.city;
-        this.$store.state.AMap_Bus.city = data.city;
-        this.$store.state.storge.toCloud = true;
-        let searchConfig = this.$store.state.AMap_PlaceSearch.config;
-        searchConfig.city = data.city;
-        this.init = true;
-        this.$emit("init");
-      }).catch(err=>{
-        this.$emit('error', err);
-      });
+      this.lcs
+        .getDataByEmail(email)
+        .then((result) => {
+          let data = JSON.parse(result);
+          this.$store.state.storge.localData = data;
+          this.$store.state.city = data.city;
+          this.$store.state.AMap_Bus.city = data.city;
+          this.$store.state.storge.toCloud = true;
+          let searchConfig = this.$store.state.AMap_PlaceSearch.config;
+          searchConfig.city = data.city;
+          this.init = true;
+          this.$emit("init");
+        })
+        .catch((err) => {
+          this.$emit("error", err);
+        });
     },
     /**
      * @description PC端导入用户
      */
-    importUser(){
-      if(this.lcs.isLogin()){//已登录
+    importUser() {
+      if (this.lcs.isLogin()) {
+        //已登录
         this.importCloud();
-      } else{
+      } else {
         this.dialogVisible = true;
       }
-    }
+    },
   },
   watch: {
-    val: function() {
+    val: function () {
       let city = this.val[this.val.length - 1];
       this.$store.state.city = city;
       this.$store.state.AMap_Bus.city = city;
@@ -145,12 +148,12 @@ export default {
       let search = new AMap.PlaceSearch(searchConfig);
       this.$store.commit("setPlaceSearch", {
         config: searchConfig,
-        search: search
+        search: search,
       });
       this.init = true;
       this.$emit("init");
-    }
-  }
+    },
+  },
 };
 </script>
 

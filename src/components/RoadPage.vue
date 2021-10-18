@@ -1,23 +1,33 @@
 <template>
   <div id="Roadpage">
-    <Mapcontainer @setLoading="setLoading"
-                  v-loading.fullscreen.lock="loading"/>
-    <Daytransmit v-if="onDrag" @moveTo="moveTo"/>
-    <Detailpath v-if="!isMobile"
-                @updateTransferPlan="updateTransferPlan"
-                @updateTransferIndex="updateTransferIndex"
-                @setCenter="setCenter"
-                @moveTo="moveTo"
-                @drag="onDrag = !onDrag"
-                @sort="sort"/>
-    <Drawer :width="300" :enable="drawerOpen" v-if="isMobile" @close="drawerOpen = false">
+    <Mapcontainer
+      @setLoading="setLoading"
+      v-loading.fullscreen.lock="loading"
+    />
+    <Daytransmit v-if="onDrag" @moveTo="moveTo" />
+    <Detailpath
+      v-if="!isMobile"
+      @updateTransferPlan="updateTransferPlan"
+      @updateTransferIndex="updateTransferIndex"
+      @setCenter="setCenter"
+      @moveTo="moveTo"
+      @drag="onDrag = !onDrag"
+      @sort="sort"
+    />
+    <Drawer
+      :width="300"
+      :enable="drawerOpen"
+      v-if="isMobile"
+      @close="drawerOpen = false"
+    >
       <Detailpath
         @updateTransferPlan="updateTransferPlan"
         @updateTransferIndex="updateTransferIndex"
         @setCenter="setCenter"
         @moveTo="moveTo"
         @drag="onDrag = !onDrag"
-        @sort="sort"/>
+        @sort="sort"
+      />
     </Drawer>
     <div id="footer" v-if="isMobile" @click="drawerOpen = true">
       <i class="iconfont icon-menu"></i>
@@ -36,13 +46,13 @@ export default {
     Detailpath,
     Mapcontainer,
     Daytransmit,
-    Drawer
+    Drawer,
   },
   data() {
     return {
       onDrag: false,
       loading: false,
-      drawerOpen: false
+      drawerOpen: false,
     };
   },
   methods: {
@@ -51,7 +61,7 @@ export default {
      * @param {item} itemIndex 节点索引
      * @param {string} type 出行方案类型
      */
-    updateTransferPlan: function(itemIndex, type) {
+    updateTransferPlan: function (itemIndex, type) {
       this.$emit("updateTransferPlan", itemIndex, type);
       //因为item在vuex里面，直接传item好像不太方便修改vuex对象？暂时先传index
       //要通过commit来修改的话，传一个vuex里面的对象的引用似乎没啥大用
@@ -61,14 +71,14 @@ export default {
      * @param {item} itemIndex 节点索引
      * @param {number} transferIndex 出行方案索引
      */
-    updateTransferIndex: function(itemIndex, transferIndex) {
+    updateTransferIndex: function (itemIndex, transferIndex) {
       this.$emit("updateTransferIndex", itemIndex, transferIndex);
     },
     /**
      * @description 设置地图中心
      * @param {number} index 设为中心的节点
      */
-    setCenter: function(index) {
+    setCenter: function (index) {
       this.$emit("setCenter", index);
     },
     /**
@@ -76,7 +86,7 @@ export default {
      * @param {number} index 移动的节点
      * @param {number} day 移动到的日期
      */
-    moveTo: function(index, day) {
+    moveTo: function (index, day) {
       this.$emit("moveTo", index, day);
     },
     /**
@@ -84,17 +94,17 @@ export default {
      * @param {number} itemOldIndex 节点旧索引
      * @param {number} itemNewIndex 节点新索引
      */
-    sort: function(itemOldIndex, itemNewIndex) {
+    sort: function (itemOldIndex, itemNewIndex) {
       this.$emit("sort", itemOldIndex, itemNewIndex);
     },
     /**
      * @description 设置读取状态
      * @param {bool} state loading状态
      */
-    setLoading: function(state) {
+    setLoading: function (state) {
       this.loading = state;
-    }
-  }
+    },
+  },
 };
 </script>
 
@@ -137,9 +147,10 @@ export default {
     width: 100%;
     height: 100%;
   }
-  #footer{
+  #footer {
     position: fixed;
-    right: 10px;bottom: 10px;
+    right: 10px;
+    bottom: 10px;
     height: 40px;
     width: 40px;
     border-radius: 100%;

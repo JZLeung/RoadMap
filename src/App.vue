@@ -1,9 +1,13 @@
 <template>
   <div id="app">
-    <Initmodel @init="init = true" @error="HandleError"/>
-    <Navbar/>
+    <Initmodel @init="init = true" @error="HandleError" />
+    <Navbar />
     <transition name="slide">
-      <Errorhandler @click.native="errorConfirmed" v-if="error != ''" :errorData="error"/>
+      <Errorhandler
+        @click.native="errorConfirmed"
+        v-if="error != ''"
+        :errorData="error"
+      />
     </transition>
     <keep-alive include="Roadpage" @error="HandleError" v-if="init">
       <router-view></router-view>
@@ -20,25 +24,25 @@ export default {
   components: {
     Navbar,
     Errorhandler,
-    Initmodel
+    Initmodel,
   },
   methods: {
-    errorConfirmed: function(e) {
+    errorConfirmed: function (e) {
       this.error = "";
     },
-    HandleError: function(error) {
+    HandleError: function (error) {
       this.$notify.error({
-          title: '错误',
-          message: error
-        });
-    }
+        title: "错误",
+        message: error,
+      });
+    },
   },
   data() {
     return {
       error: "",
-      init:false
+      init: false,
     };
-  }
+  },
 };
 </script>
 

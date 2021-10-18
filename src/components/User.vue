@@ -5,7 +5,8 @@
       title="登录/注册错误"
       type="error"
       :description="error"
-      show-icon>
+      show-icon
+    >
     </el-alert>
     <el-form ref="form" :model="form">
       <el-form-item label="邮箱">
@@ -29,13 +30,13 @@ export default {
     return {
       form: {
         name: "",
-        passwd: ""
+        passwd: "",
       },
-      error: ""
+      error: "",
     };
   },
   methods: {
-    login: function() {
+    login: function () {
       this.lcs
         .Login(this.form.name, this.form.passwd)
         .then(() => {
@@ -45,7 +46,7 @@ export default {
           this.error = "登录出错！";
         });
     },
-    signin: function() {
+    signin: function () {
       this.lcs
         .Signin(this.form.name, this.form.passwd)
         .then(() => {
@@ -54,7 +55,7 @@ export default {
         .catch(() => {
           this.error = "注册失败耶";
         });
-    }
-  }
+    },
+  },
 };
 </script>
