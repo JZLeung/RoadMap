@@ -55,13 +55,13 @@ import User from "./User";
 export default {
   name: "Navbar",
   components: {
-    User,
+    User
   },
   data() {
     return {
       dialogVisible: false,
       loading: false,
-      mycode: false,
+      mycode: false
     };
   },
   methods: {
@@ -87,7 +87,7 @@ export default {
       if (!window.localStorage) {
         this.$message({
           message: "保存需要使用localstorge",
-          type: "error",
+          type: "error"
         });
         this.loading = false;
       } else {
@@ -99,11 +99,11 @@ export default {
         if (this.$store.state.storge.toCloud) {
           this.lcs
             .saveToCloud(JSON.stringify(this.$store.getters.exportData))
-            .then((result) => {
+            .then(result => {
               console.log(result);
               this.loading = false;
             })
-            .catch((err) => {
+            .catch(err => {
               console.log(err);
               this.loading = false;
             });
@@ -114,21 +114,21 @@ export default {
     },
     showCode() {
       let that = this;
-      setTimeout(function () {
+      setTimeout(function() {
         let canvas = document.getElementById("qrcode");
+        const host = window.location.origin;
         Qrcode.toCanvas(
           canvas,
-          "https://dixeran.github.io/RoadMap/?type=mobile&email=" +
-            that.lcs.getEmail() +
-            "/",
-          function (error) {
+          `${host}/?type=mobile&email=${that.lcs.getEmail()}/`,
+          function(error) {
             if (error) console.error(error);
+            console.log(`${host}/?type=mobile&email=${that.lcs.getEmail()}/`);
             console.log("success!");
           }
         );
       }, 100);
-    },
-  },
+    }
+  }
 };
 </script>
 
